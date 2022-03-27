@@ -8,6 +8,7 @@ echo "The Build ID is: ${env.BUILD_ID}"
 echo "The job URL is: ${env.JOB_URL}"
 
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: '']])
+properties([[$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
 //Checkout Stage
 stage('CheckoutCode'){
