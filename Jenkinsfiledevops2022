@@ -7,6 +7,8 @@ echo "The Build number is:  ${env.BUILD_NUMBER}"
 echo "The Build ID is: ${env.BUILD_ID}"
 echo "The job URL is: ${env.JOB_URL}"
 
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: '']])
+
 //Checkout Stage
 stage('CheckoutCode'){
  git branch: 'development', credentialsId: '5393154b-7ae5-43c6-b74a-12c3a25e5a1a', url: 'https://github.com/ravichandra723/maven-web-application.git'
