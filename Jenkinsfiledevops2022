@@ -1,6 +1,8 @@
 node{
-
+buildName 'Dev - ${BUILD_NUMBER}'
+buildDescription 'Pipeline Script - Scriptedway'
 def mavenHome = tool name: "maven3.8.5"
+
 echo "The node name is:  ${env.NODE_NAME}"
 echo "The job name is:  ${env.JOB_NAME}"
 echo "The Build number is:  ${env.BUILD_NUMBER}"
@@ -12,7 +14,6 @@ properties([[$class: 'JobLocalConfiguration', changeReasonComment: ''], pipeline
 
 //Checkout Stage
 stage('CheckoutCode'){
-buildName 'Dev- ${env.BUILD_NUMBER}'
  git branch: 'development', credentialsId: '5393154b-7ae5-43c6-b74a-12c3a25e5a1a', url: 'https://github.com/ravichandra723/maven-web-application.git'
 }
 
