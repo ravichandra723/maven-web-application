@@ -1,3 +1,29 @@
+def sendSlackNotifications(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+}
+
 node{
 buildName 'Dev - ${BUILD_NUMBER}'
 buildDescription 'Pipeline Script - Scriptedway'
@@ -12,6 +38,7 @@ echo "The job URL is: ${env.JOB_URL}"
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: '']])
 properties([[$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
+try{
 //Checkout Stage
 stage('CheckoutCode'){
  git branch: 'development', credentialsId: '5393154b-7ae5-43c6-b74a-12c3a25e5a1a', url: 'https://github.com/ravichandra723/maven-web-application.git'
@@ -38,5 +65,12 @@ sshagent(['8f57d6ff-e877-44af-8b38-c2d899864c37']) {
 }
 }
 */
+}//Try block closing
+catch(e){
+currentbuild.result = "FAILED"
+}
+finally{
+sendSlackNotifications{currentbuild.result}
+}
 
 }//Node Closing
